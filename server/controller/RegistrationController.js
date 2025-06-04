@@ -1,40 +1,60 @@
-//данные подключения к БД
+// Данные подключения к БД
 import {auth_key, base_name} from "../ServerData.js";
-//сервер
+// Сервер
 import express from "express";
 
 import Airtable from "airtable-node";
-import {reFormaterResponseData} from "../ServerDataFunction.js";
+import {reformaterBodyData, reFormaterResponseData} from "../ServerDataFunction.js";
+
+/*
+* Работа с роутом (уникальным путем контроллера)
+* RegistrationController: работа с заявками на регистрацию
+*/
+const router = express.Router();
+
+// Инициализация Airtable для таблицы registrations
+const airtable = new Airtable({apiKey: auth_key})
+    .base(base_name)
+    .table("registrations");
 
 
 /*
-* работа с роутом (уникальным путем коннтроллера)
-* UserController: получение информации о пользователях
- */
-const router = express.Router();
-const registrationsTable = new Airtable({apiKey: auth_key})
-    .base(base_name)
-    .table("Registrations"); // Убедитесь в правильности названия таблицы
-
-router.post('/', async (req, res) => {
-    try {
-    console.log(req.body)
-        
-        const record = await registrationsTable.create(
-req.body            
-        );
-
-        res.status(201).json({ 
-            success: true,
-            message: "Запись создана успешно",
-            record: reFormaterResponseData([record])
-        });
-    } catch (error) {
-        console.error("Ошибка при создании записи:", error);
-        res.status(500).json({ 
-            success: false,
-            error: error.message || "Ошибка при создании записи" 
-        });
+    description: Маршрут для создания новой заявки
+    router: http://localhost:3010/api/registrations/
+    type: post
+    body: {
+        FullName: string (required),
+        Phone: string (required),
+        Group: string
     }
+*/
+router.post("/", (req, res) => {
+    const registrationData = reformaterBodyData([req.body])[0];
+    
+    // Валидация обязательных полей
+    if (!registrationData.FullName) {
+        return res.status(400).json({message: "ФИО обязательно для заполнения"});
+    }
+    if (!registrationData.Phone) {
+        return res.status(400).json({message: "Телефон обязателен для заполнения"});
+    }
+
+    airtable.create({
+        fields: registrationData
+    }).then(resp => {
+        // Проверяем наличие ошибок в ответе
+        if (resp.error) {
+            return res.status(500).json({message: "Произошла ошибка сервера", error: resp.error});
+        }
+
+        // Если запись успешно добавлена, возвращаем её
+        const registration = reFormaterResponseData([resp])[0];
+        return res.status(200).json(registration);
+    })
+    .catch(err => {
+        console.error(err);
+        return res.status(500).json({message: "Произошла ошибка при добавлении записи", error: err});
+    });
 });
+
 export default router;
