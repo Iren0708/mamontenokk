@@ -1,34 +1,25 @@
-export const API_BASE_URL = 'http://localhost:3000/api';
+export const API_BASE_URL = "http://localhost:3000/api"; // Базовый URL вашего API
 
-export async function fetchData(endpoint, data) {
-  const url = `${API_BASE_URL}/${endpoint}`;
+// Общая функция для выполнения запросов
+export async function fetchData(url, options = {}) {
+    try {
+        const response = await fetch(url, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+            ...options,
+        });
 
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        records: [
-          {
-            fields: data,
-          },
-        ],
-      }),
-    });
+        if (!response.ok) {
+            throw new Error({
+                ...response,
+                message: `Ошибка: ${response.status} ${response.statusText}`
+            });
+        }
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => null);
-      throw new Error(
-        errorData?.error?.message ||
-          `Server responded with status ${response.status}`
-      );
+        return await response.json();
+    } catch (error) {
+        console.error("Ошибка при выполнении запроса:", error);
+        throw error;
     }
-
-    return await response.json();
-  } catch (error) {
-    console.error('API Request Failed:', error);
-    throw new Error(error.message || 'Network request failed');
-  }
 }

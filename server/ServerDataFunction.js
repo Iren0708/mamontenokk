@@ -47,7 +47,7 @@ export function reFormaterResponseData(obj){
         }
         console.log(fields);
         return {
-            customId: record.Id,
+            customId: record.id,
             ...fields,
         };
     });

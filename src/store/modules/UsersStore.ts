@@ -1,4 +1,4 @@
-import UserService from "../../plugins/api/services/UserService.js";
+import UserService from "../../plugins/api/services/UserService";
 
 const userModule = {
     namespaced: true,
@@ -30,9 +30,8 @@ const userModule = {
         async INIT_AUTORIZATION({commit, dispatch}, usersInfo) {
             await UserService.authorizationUser(usersInfo.login, usersInfo.password).then((response) => {
                 alert(response.message);
-                console.log(response)
-                localStorage.setItem('currentUser', JSON.stringify(response.user.Id));
-                dispatch('INIT_CURRENT_USER', response.user.Id);
+                localStorage.setItem('currentUser', JSON.stringify(response.user.id));
+                dispatch('INIT_CURRENT_USER', response.user.id);
             })
                 .catch(error => {
                     console.error(error);

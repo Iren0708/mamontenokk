@@ -135,7 +135,7 @@
             value:1,
             title: 'Настройки',
             action: () => {
-              this.$router.push('/uprav');
+              this.$router.push('/');
             },
           },
           {

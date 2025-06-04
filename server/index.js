@@ -6,7 +6,11 @@ const app = express();
 //Указываем порт
 const port = 3010;
 // Middleware
-app.use(cors()); // Разрешаем запросы с фронтенда
+app.use(cors({
+    origin: 'http://localhost:5173', // или ваш фронтенд URL
+    methods: ['GET', 'POST', 'PUT'],
+    allowedHeaders: ['Content-Type']
+  }));// Разрешаем запросы с фронтенда
 app.use(express.json()); // Для обработки JSON-тела запросов
 
 (async () => {

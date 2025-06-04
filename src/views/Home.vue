@@ -118,6 +118,7 @@ export default {
         if (!this.validateForm()) return;
 
         const formData = {
+          Id: null,
           FullName: this.registrationForm.fullName.trim(),
           Phone: this.registrationForm.phone.replace(/\D/g, ''),
           Group: this.registrationForm.group,
