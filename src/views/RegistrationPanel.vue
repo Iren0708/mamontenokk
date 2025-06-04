@@ -39,13 +39,13 @@
         </v-card-text>
         <v-card-actions>
           <v-btn
-            color="primary"
+            color="orange-darken-2"
             text="Отправить"
             variant="flat"
             @click="onSubmit"
           />
           <v-btn
-            color="primary"
+            color="orange-darken-2"
             text="Отмена"
             variant="text"
             @click="onCloseDialog"
